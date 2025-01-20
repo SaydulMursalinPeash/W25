@@ -1,0 +1,29 @@
+- ros_topic_name: "/w25/lidar_back/points"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/scan_back/sensor/scan_front/scan/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+
+- ros_topic_name: "/w25/odom"
+  gz_topic_name: "/model/tugbot/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+
+- ros_topic_name: "/w25/cmd_vel"
+  gz_topic_name: "/model/tugbot/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+
+- ros_topic_name: "/w25/back_camera/image"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/camera_back/sensor/color/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+
+- ros_topic_name: "/w25/front_camera/image"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/camera_front/sensor/color/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+
+- ros_topic_name: "/w25/imu"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/imu_link/sensor/imu/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
