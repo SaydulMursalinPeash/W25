@@ -1,0 +1,234 @@
+import customtkinter as ctk
+from tkinter import Canvas, messagebox
+from PIL import Image, ImageTk
+import threading
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Imu, Image as SensorImage
+import transforms3d.euler as euler
+import math
+import io
+
+
+class IMUVisualizer(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+
+        self.title("IMU and Camera Visualizer")
+        self.geometry("1000x600")
+
+        # ROS 2 Node setup
+        rclpy.init()
+        self.node = IMUNode()
+        self.camera_node = CameraNode()
+        self.ros_thread = threading.Thread(target=self.start_ros_spin, daemon=True)
+        self.ros_thread.start()
+
+        # GUI Layout
+        self.main_frame = ctk.CTkFrame(self)
+        self.main_frame.pack(pady=20, padx=20, fill="both", expand=True)
+
+        # Left side frame for IMU controls and visualization
+        self.control_frame = ctk.CTkFrame(self.main_frame)
+        self.control_frame.pack(side="left", padx=20, fill="y")
+
+        self.topic_label = ctk.CTkLabel(self.control_frame, text="Select IMU Topic:")
+        self.topic_label.pack(pady=10)
+
+        self.topic_var = ctk.StringVar(value="")
+        self.topic_dropdown = ctk.CTkOptionMenu(self.control_frame, variable=self.topic_var, command=self.update_topic)
+        self.topic_dropdown.pack(pady=10)
+
+        self.refresh_topics_button = ctk.CTkButton(self.control_frame, text="Refresh IMU Topics", command=self.refresh_topics)
+        self.refresh_topics_button.pack(pady=10)
+
+        self.data_frame = ctk.CTkFrame(self.control_frame)
+        self.data_frame.pack(pady=20, fill="both", expand=True)
+
+        self.accel_label = ctk.CTkLabel(self.data_frame, text="Linear Acceleration: x=0.0, y=0.0, z=0.0")
+        self.accel_label.pack(pady=5)
+        
+        self.angular_label = ctk.CTkLabel(self.data_frame, text="Angular Velocity: x=0.0, y=0.0, z=0.0")
+        self.angular_label.pack(pady=5)
+
+        self.orientation_label = ctk.CTkLabel(self.data_frame, text="Orientation: x=0.0, y=0.0, z=0.0, w=0.0")
+        self.orientation_label.pack(pady=5)
+
+        # Canvas for IMU Direction Indicator
+        self.canvas = Canvas(self.control_frame, width=300, height=300, bg="white")
+        self.canvas.pack(pady=10)
+        self.arrow = self.canvas.create_line(150, 150, 150, 50, width=5, arrow="last")
+
+        # Right side frame for Camera Feed and Camera Topic Selection
+        self.visual_frame = ctk.CTkFrame(self.main_frame)
+        self.visual_frame.pack(side="right", padx=20, fill="both", expand=True)
+
+        # Camera Topic Selection
+        self.camera_topic_label = ctk.CTkLabel(self.visual_frame, text="Select Camera Topic:")
+        self.camera_topic_label.pack(pady=10)
+
+        self.camera_topic_var = ctk.StringVar(value="")
+        self.camera_topic_dropdown = ctk.CTkOptionMenu(self.visual_frame, variable=self.camera_topic_var, command=self.update_camera_topic)
+        self.camera_topic_dropdown.pack(pady=10)
+
+        self.refresh_camera_topics_button = ctk.CTkButton(self.visual_frame, text="Refresh Camera Topics", command=self.refresh_camera_topics)
+        self.refresh_camera_topics_button.pack(pady=10)
+
+        # Canvas for Camera Feed
+        self.camera_canvas = Canvas(self.visual_frame, width=640, height=480, bg="black")
+        self.camera_canvas.pack(pady=20)
+
+        # Populate initial IMU topics and Camera topics
+        self.refresh_topics()
+        self.refresh_camera_topics()
+
+        # Update GUI data periodically
+        self.update_gui_data()
+
+    def update_topic(self, topic_name):
+        self.node.update_topic(topic_name)
+
+    def refresh_topics(self):
+        topics = self.node.get_imu_topics()
+        self.topic_dropdown.configure(values=topics)
+        if topics:
+            self.topic_var.set(topics[0])
+            self.update_topic(topics[0])
+
+    def update_camera_topic(self, topic_name):
+        self.camera_node.update_topic(topic_name)
+
+    def refresh_camera_topics(self):
+        topics = self.camera_node.get_camera_topics()
+        self.camera_topic_dropdown.configure(values=topics)
+        if topics:
+            self.camera_topic_var.set(topics[0])
+            self.update_camera_topic(topics[0])
+
+    def update_gui_data(self):
+        data = self.node.get_latest_imu_data()
+        if data:
+            self.accel_label.configure(
+                text=f"Linear Acceleration: x={data['linear_acceleration'].x:.2f}, "
+                     f"y={data['linear_acceleration'].y:.2f}, z={data['linear_acceleration'].z:.2f}")
+            self.angular_label.configure(
+                text=f"Angular Velocity: x={data['angular_velocity'].x:.2f}, "
+                     f"y={data['angular_velocity'].y:.2f}, z={data['angular_velocity'].z:.2f}")
+            self.orientation_label.configure(
+                text=f"Orientation: x={data['orientation'].x:.2f}, "
+                     f"y={data['orientation'].y:.2f}, z={data['orientation'].z:.2f}, "
+                     f"w={data['orientation'].w:.2f}")
+
+            self.update_direction_indicator(data['orientation'])
+
+        camera_data = self.camera_node.get_latest_image()
+        if camera_data:
+            self.update_camera_feed(camera_data)
+
+        self.after(100, self.update_gui_data)
+
+    def update_direction_indicator(self, orientation):
+        # Convert quaternion to Euler angles
+        roll, pitch, yaw = euler.quat2euler(
+            [orientation.w, orientation.x, orientation.y, orientation.z]
+        )
+
+        # Convert yaw (heading) to a direction in the canvas
+        length = 100
+        center_x, center_y = 150, 150
+        end_x = center_x + length * math.cos(yaw)
+        end_y = center_y - length * math.sin(yaw)
+
+        # Update arrow direction
+        self.canvas.coords(self.arrow, center_x, center_y, end_x, end_y)
+
+    def update_camera_feed(self, img):
+        # Update image on canvas
+        image = Image.open(io.BytesIO(img))
+        image = image.resize((640, 480))
+        img_tk = ImageTk.PhotoImage(image)
+        self.camera_canvas.create_image(0, 0, anchor="nw", image=img_tk)
+        self.camera_canvas.image = img_tk  # keep a reference to avoid garbage collection
+
+    def start_ros_spin(self):
+        try:
+            rclpy.spin(self.node)
+            rclpy.spin(self.camera_node)
+        except KeyboardInterrupt:
+            print("ROS2 Node interrupted")
+        finally:
+            self.node.destroy_node()
+            self.camera_node.destroy_node()
+            rclpy.shutdown()
+
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            try:
+                # First, shutdown ROS2
+                self.node.destroy_node()
+                self.camera_node.destroy_node()
+                rclpy.shutdown()
+            except Exception as e:
+                print(f"Error while shutting down ROS2: {e}")
+            
+            # Then, stop the Tkinter application
+            self.destroy()
+
+
+class IMUNode(Node):
+    def __init__(self):
+        super().__init__('imu_visualizer_node')
+        self.subscriber = None
+        self.latest_data = None
+
+    def update_topic(self, topic_name):
+        if self.subscriber:
+            self.destroy_subscription(self.subscriber)
+
+        self.subscriber = self.create_subscription(
+            Imu, topic_name, self.imu_callback, 10)
+
+    def imu_callback(self, msg):
+        self.latest_data = {
+            'linear_acceleration': msg.linear_acceleration,
+            'angular_velocity': msg.angular_velocity,
+            'orientation': msg.orientation
+        }
+
+    def get_latest_imu_data(self):
+        return self.latest_data
+
+    def get_imu_topics(self):
+        topics = self.get_topic_names_and_types()
+        return [name for name, types in topics if 'sensor_msgs/msg/Imu' in types]
+
+
+class CameraNode(Node):
+    def __init__(self):
+        super().__init__('camera_visualizer_node')
+        self.subscriber = None
+        self.latest_image = None
+
+    def update_topic(self, topic_name):
+        if self.subscriber:
+            self.destroy_subscription(self.subscriber)
+
+     2   self.subscriber = self.create_subscription(
+            SensorImage, topic_name, self.camera_callback, 10)
+
+    def camera_callback(self, msg):
+        self.latest_image = msg.data
+        self.get_logger().info(f"Received camera image of size {len(msg.data)}")
+
+    def get_latest_image(self):
+        return self.latest_image
+
+    def get_camera_topics(self):
+        topics = self.get_topic_names_and_types()
+        return [name for name, types in topics if 'sensor_msgs/msg/Image' in types]
+
+
+if __name__ == "__main__":
+    app = IMUVisualizer()
+    app.protocol("WM_DELETE_WINDOW", app.on_closing)
+    app.mainloop()
