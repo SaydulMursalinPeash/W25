@@ -11,7 +11,6 @@ import math
 import numpy as np
 import cv2
 import sys
-import time  # Import the time module
 from rclpy.executors import MultiThreadedExecutor
 
 class IMUVisualizer(ctk.CTk):
@@ -141,51 +140,6 @@ class IMUVisualizer(ctk.CTk):
         # Store the current PhotoImage
         self.current_image = None
 
-        self.update_camera_stream()
-
-    def update_camera_stream(self):
-        # Start a new thread for fetching and processing the image stream
-        threading.Thread(target=self.fetch_and_display_image, daemon=True).start()
-
-    def fetch_and_display_image(self):
-        while True:
-            # Fetch the image from the camera or video stream
-            frame = self.get_camera_frame()
-
-            if frame is not None:
-                # Process the image if needed
-                processed_frame = self.process_image(frame)
-
-                # Update the GUI with the new image
-                self.update_image_label(processed_frame)
-
-            # Sleep for a short duration to reduce the update frequency
-            time.sleep(0.1)
-
-    def get_camera_frame(self):
-        # Replace with your actual method to get the camera frame
-        # Example using OpenCV to capture from a webcam
-        cap = cv2.VideoCapture(0)
-        ret, frame = cap.read()
-        cap.release()
-        if not ret:
-            return None
-        return frame
-
-    def process_image(self, frame):
-        # Example processing: convert the frame to RGB
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return frame_rgb
-
-    def update_image_label(self, frame):
-        # Convert the frame to a format suitable for Tkinter
-        image = Image.fromarray(frame)
-        image_tk = ImageTk.PhotoImage(image)
-
-        # Update the label with the new image
-        self.camera_label.configure(image=image_tk)
-        self.camera_label.image = image_tk
-
     def setup_teleop_controls(self):
         # Teleop controls moved to the right column
         self.teleop_frame = ctk.CTkFrame(self.main_frame)
@@ -205,37 +159,38 @@ class IMUVisualizer(ctk.CTk):
                                                         command=self.refresh_teleop_topics)
         self.refresh_teleop_topics_button.pack(pady=10)
 
-        # Teleop control buttons (using equal width and height for circular buttons)
+        # Teleop control buttons in a vertical arrangement
         self.button_frame = ctk.CTkFrame(self.teleop_frame)
         self.button_frame.pack(pady=10)
 
-        # Circular buttons - adjusting width and height to make them round
+        # Create a vertical layout for buttons
         button_size = 60  # Define button size to make them round
 
-        self.forward_button = ctk.CTkButton(self.button_frame, text="▲", 
-                                            command=lambda: self.teleop_node.publish_velocity(0.5, 0.0),
-                                            width=button_size, height=button_size)
-        self.forward_button.pack(side="left", padx=5, pady=5)
-
-        self.backward_button = ctk.CTkButton(self.button_frame, text="▼", 
-                                            command=lambda: self.teleop_node.publish_velocity(-0.5, 0.0),
-                                            width=button_size, height=button_size)
-        self.backward_button.pack(side="left", padx=5, pady=5)
+        # Up-Down-Left-Right with Stop button at the center
+        self.up_button = ctk.CTkButton(self.button_frame, text="▲", 
+                                       command=lambda: self.teleop_node.publish_velocity(0.5, 0.0),
+                                       width=button_size, height=button_size)
+        self.up_button.grid(row=0, column=1, pady=5)
 
         self.left_button = ctk.CTkButton(self.button_frame, text="◀", 
-                                        command=lambda: self.teleop_node.publish_velocity(0.0, 0.5),
-                                        width=button_size, height=button_size)
-        self.left_button.pack(side="left", padx=5, pady=5)
-
-        self.right_button = ctk.CTkButton(self.button_frame, text="▶", 
-                                        command=lambda: self.teleop_node.publish_velocity(0.0, -0.5),
-                                        width=button_size, height=button_size)
-        self.right_button.pack(side="left", padx=5, pady=5)
+                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.5),
+                                         width=button_size, height=button_size)
+        self.left_button.grid(row=1, column=0, padx=5, pady=5)
 
         self.stop_button = ctk.CTkButton(self.button_frame, text="Stop", 
-                                        command=lambda: self.teleop_node.publish_velocity(0.0, 0.0),
+                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.0),
+                                         width=button_size, height=button_size)
+        self.stop_button.grid(row=1, column=1, pady=5)
+
+        self.right_button = ctk.CTkButton(self.button_frame, text="▶", 
+                                          command=lambda: self.teleop_node.publish_velocity(0.0, -0.5),
+                                          width=button_size, height=button_size)
+        self.right_button.grid(row=1, column=2, padx=5, pady=5)
+
+        self.down_button = ctk.CTkButton(self.button_frame, text="▼", 
+                                        command=lambda: self.teleop_node.publish_velocity(-0.5, 0.0),
                                         width=button_size, height=button_size)
-        self.stop_button.pack(side="left", padx=5, pady=5)
+        self.down_button.grid(row=2, column=1, pady=5)
 
     def update_topic(self, topic_name):
         self.node.update_topic(topic_name)
@@ -448,8 +403,9 @@ class TeleopNode(Node):
         self.publisher = None
 
     def update_topic(self, topic_name):
-        if self.publisher is None:
-            self.publisher = self.create_publisher(Twist, topic_name, 10)
+        if self.publisher:
+            self.destroy_publisher(self.publisher)
+        self.publisher = self.create_publisher(Twist, topic_name, 10)
 
     def publish_velocity(self, linear_x, angular_z):
         msg = Twist()
@@ -465,3 +421,4 @@ class TeleopNode(Node):
 if __name__ == "__main__":
     app = IMUVisualizer()
     app.mainloop()
+
