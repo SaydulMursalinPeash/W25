@@ -1,104 +1,208 @@
+import customtkinter as ctk
+from tkinter import Canvas, messagebox
+import threading
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
-from nav_msgs.msg import Odometry
-import customtkinter as ctk
+import transforms3d.euler as euler
 import math
+import sys
 
-class OdometryGUI(ctk.CTk, Node):
+class IMUVisualizer(ctk.CTk):
     def __init__(self):
-        ctk.CTk.__init__(self)
-        Node.__init__(self, 'odometry_gui')
+        super().__init__()
 
-        self.title("Odometry GUI")
+        self.running = True
+
+        self.title("IMU Visualizer with Odometry")
         self.geometry("800x600")
 
-        self.x = 400  # Center of the canvas
-        self.y = 300  # Center of the canvas
-        self.theta = 0
+        # Initialize ROS 2
+        rclpy.init(args=None)
+        self.node = IMUNode()
 
-        self.odom_pub = self.create_publisher(Odometry, '/odom', 10)
-        self.imu_sub = None
+        # Start ROS2 spin in a separate thread
+        self.ros_thread = threading.Thread(target=self.ros_spin_thread, daemon=True)
+        self.ros_thread.start()
 
-        self.create_widgets()
-        self.update_imu_topics()
+        # GUI Layout
+        self.setup_gui()
 
-        self.last_time = self.get_clock().now()
+        # Bind the window close event
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-        # Create IMU data window
-        self.imu_window = ctk.CTkToplevel(self)
-        self.imu_window.title("IMU Data")
-        self.imu_window.geometry("400x300")
-        self.imu_label = ctk.CTkLabel(self.imu_window, text="IMU Data: ", font=("Helvetica", 16))
-        self.imu_label.pack(pady=10)
+    def setup_gui(self):
+        # Main frame
+        self.main_frame = ctk.CTkFrame(self)
+        self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-    def create_widgets(self):
-        self.topic_label = ctk.CTkLabel(self, text="IMU Topic:")
+        # IMU controls
+        self.topic_label = ctk.CTkLabel(self.main_frame, text="Select IMU Topic:")
         self.topic_label.pack(pady=10)
 
-        self.topic_var = ctk.StringVar()
-        self.topic_menu = ctk.CTkOptionMenu(self, variable=self.topic_var, command=self.update_subscription)
-        self.topic_menu.pack(pady=10)
+        self.topic_var = ctk.StringVar(value="")
+        self.topic_dropdown = ctk.CTkOptionMenu(self.main_frame, variable=self.topic_var, 
+                                                command=self.update_topic)
+        self.topic_dropdown.pack(pady=10)
 
-        self.canvas = ctk.CTkCanvas(self, width=800, height=600)
-        self.canvas.pack()
+        self.refresh_topics_button = ctk.CTkButton(self.main_frame, text="Refresh IMU Topics", 
+                                                  command=self.refresh_topics)
+        self.refresh_topics_button.pack(pady=10)
 
-    def update_imu_topics(self):
-        topics = self.get_topic_names_and_types()
-        imu_topics = [name for name, types in topics if 'sensor_msgs/msg/Imu' in types]
-        self.topic_menu.configure(values=imu_topics)
-        if imu_topics:
-            self.topic_var.set(imu_topics[0])
-            self.update_subscription(imu_topics[0])
-        else:
-            print("No IMU topics found")
+        # IMU Data display
+        self.data_frame = ctk.CTkFrame(self.main_frame)
+        self.data_frame.pack(pady=20, fill="both", expand=True)
 
-    def update_subscription(self, topic_name):
-        if self.imu_sub:
-            self.destroy_subscription(self.imu_sub)
-        print(f"Subscribing to IMU topic: {topic_name}")
-        self.imu_sub = self.create_subscription(Imu, topic_name, self.imu_callback, 10)
+        self.accel_label = ctk.CTkLabel(self.data_frame, text="Linear Acceleration: x=0.0, y=0.0, z=0.0")
+        self.accel_label.pack(pady=5)
+
+        self.angular_label = ctk.CTkLabel(self.data_frame, text="Angular Velocity: x=0.0, y=0.0, z=0.0")
+        self.angular_label.pack(pady=5)
+
+        self.orientation_label = ctk.CTkLabel(self.data_frame, text="Orientation: x=0.0, y=0.0, z=0.0, w=0.0")
+        self.orientation_label.pack(pady=5)
+
+        self.odometry_label = ctk.CTkLabel(self.data_frame, text="Odometry: x=0.0, y=0.0, theta=0.0")
+        self.odometry_label.pack(pady=5)
+
+        # IMU Direction Indicator
+        self.canvas = Canvas(self.data_frame, width=300, height=300, bg="white")
+        self.canvas.pack(pady=10)
+        self.arrow = self.canvas.create_line(150, 150, 150, 50, width=5, arrow="last")
+
+        # Populate initial topics
+        self.refresh_topics()
+
+        # Update GUI periodically
+        self.update_gui_data()
+
+    def update_topic(self, topic_name):
+        self.node.update_topic(topic_name)
+
+    def refresh_topics(self):
+        topics = self.node.get_imu_topics()
+        self.topic_dropdown.configure(values=topics)
+        if topics:
+            self.topic_var.set(topics[0])
+            self.update_topic(topics[0])
+
+    def update_gui_data(self):
+        if not self.running:
+            return
+
+        # Update IMU data
+        data = self.node.get_latest_imu_data()
+        if data:
+            self.accel_label.configure(
+                text=f"Linear Acceleration: x={data['linear_acceleration'].x:.2f}, "
+                     f"y={data['linear_acceleration'].y:.2f}, z={data['linear_acceleration'].z:.2f}")
+            self.angular_label.configure(
+                text=f"Angular Velocity: x={data['angular_velocity'].x:.2f}, "
+                     f"y={data['angular_velocity'].y:.2f}, z={data['angular_velocity'].z:.2f}")
+            self.orientation_label.configure(
+                text=f"Orientation: x={data['orientation'].x:.2f}, "
+                     f"y={data['orientation'].y:.2f}, z={data['orientation'].z:.2f}, "
+                     f"w={data['orientation'].w:.2f}")
+            self.update_direction_indicator(data['orientation'])
+
+            # Calculate and update odometry
+            odometry = self.node.calculate_odometry()
+            if odometry:
+                self.odometry_label.configure(
+                    text=f"Odometry: x={odometry['x']:.2f}, y={odometry['y']:.2f}, theta={odometry['theta']:.2f}")
+
+        self.after(100, self.update_gui_data)
+
+    def update_direction_indicator(self, orientation):
+        roll, pitch, yaw = euler.quat2euler(
+            [orientation.w, orientation.x, orientation.y, orientation.z]
+        )
+        length = 100
+        center_x, center_y = 150, 150
+        end_x = center_x + length * math.cos(yaw)
+        end_y = center_y - length * math.sin(yaw)
+        self.canvas.coords(self.arrow, center_x, center_y, end_x, end_y)
+
+    def ros_spin_thread(self):
+        try:
+            while rclpy.ok() and self.running:
+                rclpy.spin_once(self.node, timeout_sec=0.1)
+        except Exception as e:
+            print(f"Error in ROS spin thread: {e}")
+        finally:
+            self.cleanup()
+
+    def cleanup(self):
+        self.running = False
+        if self.node:
+            self.node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            self.cleanup()
+            self.quit()
+            self.destroy()
+            sys.exit(0)
+
+class IMUNode(Node):
+    def __init__(self):
+        super().__init__('imu_visualizer_node')
+        self.subscriber = None
+        self.latest_data = None
+
+        # Variables for odometry calculation
+        self.x = 0.0
+        self.y = 0.0
+        self.theta = 0.0
+        self.last_time = None
+
+    def update_topic(self, topic_name):
+        if self.subscriber:
+            self.destroy_subscription(self.subscriber)
+        self.subscriber = self.create_subscription(
+            Imu, topic_name, self.imu_callback, 10)
 
     def imu_callback(self, msg):
-        print("Received IMU data")
-        current_time = self.get_clock().now()
-        dt = (current_time - self.last_time).nanoseconds / 1e9
+        self.latest_data = {
+            'linear_acceleration': msg.linear_acceleration,
+            'angular_velocity': msg.angular_velocity,
+            'orientation': msg.orientation
+        }
+
+        # Calculate odometry
+        self.calculate_odometry_from_msg(msg)
+
+    def get_latest_imu_data(self):
+        return self.latest_data
+
+    def get_imu_topics(self):
+        topics = self.get_topic_names_and_types()
+        return [name for name, types in topics if 'sensor_msgs/msg/Imu' in types]
+
+    def calculate_odometry_from_msg(self, msg):
+        current_time = self.get_clock().now().to_msg().sec + self.get_clock().now().to_msg().nanosec * 1e-9
+
+        if self.last_time is None:
+            self.last_time = current_time
+            return
+
+        dt = current_time - self.last_time
         self.last_time = current_time
 
-        self.linear_velocity = msg.linear_acceleration.x * dt
-        self.angular_velocity = msg.angular_velocity.z * dt
+        # Use linear acceleration and angular velocity to update position
+        ax = msg.linear_acceleration.x
+        ay = msg.linear_acceleration.y
+        omega = msg.angular_velocity.z
 
-        self.theta += self.angular_velocity * dt
-        self.x += self.linear_velocity * math.cos(self.theta) * dt * 100  # Scale for better visibility
-        self.y += self.linear_velocity * math.sin(self.theta) * dt * 100  # Scale for better visibility
+        self.theta += omega * dt
+        self.x += 0.5 * ax * dt**2 * math.cos(self.theta)
+        self.y += 0.5 * ay * dt**2 * math.sin(self.theta)
 
-        odom = Odometry()
-        odom.header.stamp = current_time.to_msg()
-        odom.header.frame_id = "odom"
-        odom.child_frame_id = "base_link"
-        odom.pose.pose.position.x = self.x
-        odom.pose.pose.position.y = self.y
-        odom.pose.pose.orientation.z = math.sin(self.theta / 2.0)
-        odom.pose.pose.orientation.w = math.cos(self.theta / 2.0)
-        self.odom_pub.publish(odom)
-
-        self.update_canvas()
-
-        # Update IMU data window
-        imu_data_text = f"Linear Acceleration:\n  x: {msg.linear_acceleration.x:.2f}\n  y: {msg.linear_acceleration.y:.2f}\n  z: {msg.linear_acceleration.z:.2f}\n\n"
-        imu_data_text += f"Angular Velocity:\n  x: {msg.angular_velocity.x:.2f}\n  y: {msg.angular_velocity.y:.2f}\n  z: {msg.angular_velocity.z:.2f}"
-        self.imu_label.config(text=imu_data_text)
-
-    def update_canvas(self):
-        self.canvas.delete("all")
-        self.canvas.create_oval(self.x - 5, self.y - 5, self.x + 5, self.y + 5, fill="blue")
-        self.canvas.create_line(self.x, self.y, self.x + 20 * math.cos(self.theta), self.y + 20 * math.sin(self.theta), fill="red")
-
-def main(args=None):
-    rclpy.init(args=args)
-    app = OdometryGUI()
-    app.mainloop()
-    rclpy.shutdown()
+    def calculate_odometry(self):
+        return {'x': self.x, 'y': self.y, 'theta': self.theta}
 
 if __name__ == "__main__":
-    main()
+    app = IMUVisualizer()
+    app.mainloop()
