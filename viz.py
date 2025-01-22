@@ -134,8 +134,8 @@ class IMUVisualizer(ctk.CTk):
         self.debug_label.pack(pady=5)
 
         # Camera Feed Canvas - making it more compact
-        self.camera_canvas = Canvas(self.visual_frame, width=640, height=360, bg="black")
-        self.camera_canvas.pack(pady=20)
+        self.camera_feed_canvas = Canvas(self.visual_frame, width=640, height=360, bg="black")
+        self.camera_feed_canvas.pack(pady=20)
 
         # Store the current PhotoImage
         self.current_image = None
@@ -262,46 +262,43 @@ class IMUVisualizer(ctk.CTk):
         try:
             # Update debug information
             debug_info = (f"Image info - Width: {img_msg.width}, Height: {img_msg.height}, "
-                         f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
+                        f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
             self.debug_label.configure(text=debug_info)
 
-            # Convert ROS image message to numpy array
-            img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
-                img_msg.height, img_msg.width, -1
-            )
-
             # Handle different encodings
-            if img_msg.encoding == 'bgr8':
-                img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
-            elif img_msg.encoding == 'rgb8':
-                pass  # Already in RGB format
-            elif img_msg.encoding == 'mono8':
-                img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
+            if img_msg.encoding in ['bgr8', 'rgb8', 'mono8']:
+                img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
+                    img_msg.height, img_msg.width, -1
+                )
+                if img_msg.encoding == 'bgr8':
+                    img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+                elif img_msg.encoding == 'mono8':
+                    img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
+            elif img_msg.encoding == '32FC1':
+                # Skip processing and directly display the raw depth image
+                img_array = np.frombuffer(img_msg.data, dtype=np.float32).reshape(
+                    img_msg.height, img_msg.width
+                )
+                img_array = cv2.normalize(img_array, None, 0, 255, cv2.NORM_MINMAX)
+                img_array = np.nan_to_num(img_array, nan=0.0)  # Handle NaN values
+                img_array = np.uint8(img_array)  # Convert to uint8 for visualization
             else:
                 print(f"Unsupported encoding: {img_msg.encoding}")
                 return
 
             # Convert numpy array to PIL Image
             image = Image.fromarray(img_array)
-            
+
             # Resize image to fit canvas
-            image = image.resize((640, 360))  # Reduced height to make it more compact
-            
-            # Convert to PhotoImage
-            self.current_image = ImageTk.PhotoImage(image)
-            
-            # Update canvas
-            self.camera_canvas.delete("all")
-            self.camera_canvas.create_image(
-                320, 180,  # Center of canvas
-                anchor="center",
-                image=self.current_image
-            )
-            
+            image = image.resize((640, 360))  # Adjust size to fit canvas
+
+            # Update the canvas with the new image
+            self.camera_feed_image = ImageTk.PhotoImage(image)
+            self.camera_feed_canvas.create_image(0, 0, anchor='nw', image=self.camera_feed_image)
+
         except Exception as e:
             print(f"Error updating camera feed: {e}")
-            import traceback
-            traceback.print_exc()
+
 
     def ros_spin_thread(self):
         try:

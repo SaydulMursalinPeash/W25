@@ -21,7 +21,7 @@ class IMUVisualizer(ctk.CTk):
         self.running = True
 
         self.title("IMU, Camera, and Teleop Visualizer")
-        self.geometry("1000x800")
+        self.geometry("1200x800")  # Increased width to accommodate the new column
 
         # Initialize ROS 2
         rclpy.init(args=None)
@@ -48,16 +48,22 @@ class IMUVisualizer(ctk.CTk):
     def setup_gui(self):
         # Main frame
         self.main_frame = ctk.CTkFrame(self)
-        self.main_frame.pack(pady=20, padx=20, fill="both", expand=True)
+        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)  # Use grid layout for the main frame
 
         # Left side - IMU controls
         self.setup_imu_controls()
 
-        # Right side - Camera feed
+        # Middle column - Camera feed
         self.setup_camera_controls()
 
-        # Teleop control panel at the bottom of the left column
+        # Right column - Teleop controls
         self.setup_teleop_controls()
+
+        # Ensure the window expands as needed
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)  # IMU controls column
+        self.grid_columnconfigure(1, weight=2)  # Camera feed column
+        self.grid_columnconfigure(2, weight=1)  # Teleop controls column
 
         # Populate initial topics
         self.refresh_topics()
@@ -69,7 +75,7 @@ class IMUVisualizer(ctk.CTk):
 
     def setup_imu_controls(self):
         self.control_frame = ctk.CTkFrame(self.main_frame)
-        self.control_frame.pack(side="left", padx=20, fill="y")
+        self.control_frame.grid(row=0, column=0, padx=20, sticky="nsew")
 
         self.topic_label = ctk.CTkLabel(self.control_frame, text="Select IMU Topic:")
         self.topic_label.pack(pady=10)
@@ -107,7 +113,7 @@ class IMUVisualizer(ctk.CTk):
 
     def setup_camera_controls(self):
         self.visual_frame = ctk.CTkFrame(self.main_frame)
-        self.visual_frame.pack(side="right", padx=20, fill="both", expand=True)
+        self.visual_frame.grid(row=0, column=1, padx=20, sticky="nsew")
 
         self.camera_topic_label = ctk.CTkLabel(self.visual_frame, text="Select Camera Topic:")
         self.camera_topic_label.pack(pady=10)
@@ -127,54 +133,64 @@ class IMUVisualizer(ctk.CTk):
         self.debug_label = ctk.CTkLabel(self.visual_frame, text="Camera Debug Info: No data")
         self.debug_label.pack(pady=5)
 
-        # Camera Feed Canvas
-        self.camera_canvas = Canvas(self.visual_frame, width=640, height=480, bg="black")
-        self.camera_canvas.pack(pady=20)
+        # Camera Feed Canvas - making it more compact
+        self.camera_feed_canvas = Canvas(self.visual_frame, width=640, height=360, bg="black")
+        self.camera_feed_canvas.pack(pady=20)
 
         # Store the current PhotoImage
         self.current_image = None
 
     def setup_teleop_controls(self):
-        self.teleop_frame = ctk.CTkFrame(self.control_frame)
-        self.teleop_frame.pack(pady=20, fill="both", expand=True)
+        # Teleop controls moved to the right column
+        self.teleop_frame = ctk.CTkFrame(self.main_frame)
+        self.teleop_frame.grid(row=0, column=2, padx=20, sticky="nsew")
 
         self.teleop_topic_label = ctk.CTkLabel(self.teleop_frame, text="Select Teleop Topic:")
         self.teleop_topic_label.pack(pady=10)
 
         self.teleop_topic_var = ctk.StringVar(value="")
         self.teleop_topic_dropdown = ctk.CTkOptionMenu(self.teleop_frame, 
-                                                      variable=self.teleop_topic_var, 
-                                                      command=self.update_teleop_topic)
+                                                    variable=self.teleop_topic_var, 
+                                                    command=self.update_teleop_topic)
         self.teleop_topic_dropdown.pack(pady=10)
 
         self.refresh_teleop_topics_button = ctk.CTkButton(self.teleop_frame, 
-                                                         text="Refresh Teleop Topics", 
-                                                         command=self.refresh_teleop_topics)
+                                                        text="Refresh Teleop Topics", 
+                                                        command=self.refresh_teleop_topics)
         self.refresh_teleop_topics_button.pack(pady=10)
 
-        # Teleop control buttons
+        # Teleop control buttons in a vertical arrangement
         self.button_frame = ctk.CTkFrame(self.teleop_frame)
         self.button_frame.pack(pady=10)
 
-        self.forward_button = ctk.CTkButton(self.button_frame, text="▲", 
-                                            command=lambda: self.teleop_node.publish_velocity(0.5, 0.0))
-        self.forward_button.grid(row=0, column=1, padx=5, pady=5)
+        # Create a vertical layout for buttons
+        button_size = 60  # Define button size to make them round
 
-        self.backward_button = ctk.CTkButton(self.button_frame, text="▼", 
-                                             command=lambda: self.teleop_node.publish_velocity(-0.5, 0.0))
-        self.backward_button.grid(row=2, column=1, padx=5, pady=5)
+        # Up-Down-Left-Right with Stop button at the center
+        self.up_button = ctk.CTkButton(self.button_frame, text="▲", 
+                                       command=lambda: self.teleop_node.publish_velocity(0.5, 0.0),
+                                       width=button_size, height=button_size)
+        self.up_button.grid(row=0, column=1, pady=5)
 
         self.left_button = ctk.CTkButton(self.button_frame, text="◀", 
-                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.5))
+                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.5),
+                                         width=button_size, height=button_size)
         self.left_button.grid(row=1, column=0, padx=5, pady=5)
 
+        self.stop_button = ctk.CTkButton(self.button_frame, text="Stop", 
+                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.0),
+                                         width=button_size, height=button_size)
+        self.stop_button.grid(row=1, column=1, pady=5)
+
         self.right_button = ctk.CTkButton(self.button_frame, text="▶", 
-                                          command=lambda: self.teleop_node.publish_velocity(0.0, -0.5))
+                                          command=lambda: self.teleop_node.publish_velocity(0.0, -0.5),
+                                          width=button_size, height=button_size)
         self.right_button.grid(row=1, column=2, padx=5, pady=5)
 
-        self.stop_button = ctk.CTkButton(self.button_frame, text="Stop", 
-                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.0))
-        self.stop_button.grid(row=1, column=1, padx=5, pady=5)
+        self.down_button = ctk.CTkButton(self.button_frame, text="▼", 
+                                        command=lambda: self.teleop_node.publish_velocity(-0.5, 0.0),
+                                        width=button_size, height=button_size)
+        self.down_button.grid(row=2, column=1, pady=5)
 
     def update_topic(self, topic_name):
         self.node.update_topic(topic_name)
@@ -249,18 +265,30 @@ class IMUVisualizer(ctk.CTk):
                          f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
             self.debug_label.configure(text=debug_info)
 
-            # Convert ROS image message to numpy array
-            img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
-                img_msg.height, img_msg.width, -1
-            )
-
             # Handle different encodings
             if img_msg.encoding == 'bgr8':
+                img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
+                    img_msg.height, img_msg.width, -1
+                )
                 img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
             elif img_msg.encoding == 'rgb8':
-                pass  # Already in RGB format
+                img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
+                    img_msg.height, img_msg.width, -1
+                )
             elif img_msg.encoding == 'mono8':
+                img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
+                    img_msg.height, img_msg.width, -1
+                )
                 img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
+            elif img_msg.encoding == '32FC1':
+                img_array = np.frombuffer(img_msg.data, dtype=np.float32).reshape(
+                    img_msg.height, img_msg.width
+                )
+                # Normalize the depth image for visualization
+                img_array = cv2.normalize(img_array, None, 0, 255, cv2.NORM_MINMAX)
+                img_array = np.nan_to_num(img_array, nan=0.0)  # Handle NaN values
+                img_array = np.uint8(img_array)
+                img_array = cv2.applyColorMap(img_array, cv2.COLORMAP_JET)
             else:
                 print(f"Unsupported encoding: {img_msg.encoding}")
                 return
@@ -269,23 +297,14 @@ class IMUVisualizer(ctk.CTk):
             image = Image.fromarray(img_array)
             
             # Resize image to fit canvas
-            image = image.resize((640, 480))
-            
-            # Convert to PhotoImage
-            self.current_image = ImageTk.PhotoImage(image)
-            
-            # Update canvas
-            self.camera_canvas.delete("all")
-            self.camera_canvas.create_image(
-                320, 240,  # Center of canvas
-                anchor="center",
-                image=self.current_image
-            )
-            
+            image = image.resize((640, 360))  # Reduced height to make it more compact
+
+            # Update the canvas with the new image
+            self.camera_feed_image = ImageTk.PhotoImage(image)
+            self.camera_feed_canvas.create_image(0, 0, anchor='nw', image=self.camera_feed_image)
+
         except Exception as e:
             print(f"Error updating camera feed: {e}")
-            import traceback
-            traceback.print_exc()
 
     def ros_spin_thread(self):
         try:
@@ -369,17 +388,9 @@ class CameraNode(Node):
             self.destroy_subscription(self.subscriber)
         self.subscriber = self.create_subscription(
             SensorImage, topic_name, self.camera_callback, 10)
-        self.get_logger().info(f"Subscribed to camera topic: {topic_name}")
 
     def camera_callback(self, msg):
-        try:
-            self.latest_image = msg
-            self.get_logger().debug(
-                f"Received camera image: {msg.width}x{msg.height}, "
-                f"encoding: {msg.encoding}, step: {msg.step}"
-            )
-        except Exception as e:
-            self.get_logger().error(f"Error in camera callback: {e}")
+        self.latest_image = msg
 
     def get_latest_image(self):
         return self.latest_image
@@ -391,21 +402,19 @@ class CameraNode(Node):
 
 class TeleopNode(Node):
     def __init__(self):
-        super().__init__('teleop_node')
+        super().__init__('teleop_visualizer_node')
         self.publisher = None
 
     def update_topic(self, topic_name):
+        if self.publisher:
+            self.destroy_publisher(self.publisher)
         self.publisher = self.create_publisher(Twist, topic_name, 10)
-        self.get_logger().info(f"Teleop topic updated to: {topic_name}")
 
     def publish_velocity(self, linear_x, angular_z):
-        if self.publisher:
-            msg = Twist()
-            msg.linear.x = linear_x
-            msg.angular.z = angular_z
-            self.publisher.publish(msg)
-        else:
-            self.get_logger().warn("Teleop topic is not set")
+        msg = Twist()
+        msg.linear.x = linear_x
+        msg.angular.z = angular_z
+        self.publisher.publish(msg)
 
     def get_cmd_vel_topics(self):
         topics = self.get_topic_names_and_types()
@@ -414,10 +423,5 @@ class TeleopNode(Node):
 
 if __name__ == "__main__":
     app = IMUVisualizer()
-    try:
-        app.mainloop()
-    except KeyboardInterrupt:
-        print("Received keyboard interrupt")
-    finally:
-        app.cleanup()
-        sys.exit(0)
+    app.mainloop()
+
