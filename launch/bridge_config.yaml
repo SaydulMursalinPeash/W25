@@ -131,3 +131,8 @@
   gz_type_name: "gz.msgs.Pose_V"
   direction: GZ_TO_ROS
 
+- ros_topic_name: "/w25/imu"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/imu_link/sensor/imu/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS

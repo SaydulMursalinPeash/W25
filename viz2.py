@@ -262,7 +262,7 @@ class IMUVisualizer(ctk.CTk):
         try:
             # Update debug information
             debug_info = (f"Image info - Width: {img_msg.width}, Height: {img_msg.height}, "
-                         f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
+                        f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
             self.debug_label.configure(text=debug_info)
 
             # Convert ROS image message to numpy array
@@ -277,6 +277,16 @@ class IMUVisualizer(ctk.CTk):
                 pass  # Already in RGB format
             elif img_msg.encoding == 'mono8':
                 img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
+            elif img_msg.encoding == '16UC1':
+                # Normalize depth image to 0-255 for display
+                img_array = cv2.normalize(img_array, None, 0, 255, cv2.NORM_MINMAX)
+                img_array = np.uint8(img_array)
+                img_array = cv2.applyColorMap(img_array, cv2.COLORMAP_JET)
+            elif img_msg.encoding == '32FC1':
+                # Normalize depth image to 0-255 for display
+                img_array = cv2.normalize(img_array, None, 0, 255, cv2.NORM_MINMAX)
+                img_array = np.uint8(img_array)
+                img_array = cv2.applyColorMap(img_array, cv2.COLORMAP_JET)
             else:
                 print(f"Unsupported encoding: {img_msg.encoding}")
                 return
