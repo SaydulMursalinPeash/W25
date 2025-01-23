@@ -22,7 +22,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='back_lidar_tf',
-            arguments=['-0.2075', '0.0', '0.205', '0.0', '0.0', '3.141592654', 'base_link', 'tugbot/scan_back/scan_back']
+            arguments=['-0.2075', '0.0', '0.205', '0.0', '0.0', '1.0', '0.0', 'base_link', 'tugbot/scan_back/scan_back']
         ),
         # Static transform for front LIDAR
         Node(
