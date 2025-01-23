@@ -7,6 +7,16 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(nav_msgs REQUIRED)
+
+ament_python_install_package(${PROJECT_NAME})
+install(PROGRAMS
+  ${PROJECT_NAME}/kmf.py
+  ${PROJECT_NAME}/odom_noisy_node.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 install(DIRECTORY launch urdf W25
 DESTINATION share/${PROJECT_NAME}/)
