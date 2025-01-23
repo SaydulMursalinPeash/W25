@@ -8,7 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY launch urdf
+install(DIRECTORY launch urdf W25
 DESTINATION share/${PROJECT_NAME}/)
 # uncomment the following section in order to fill in
 # further dependencies manually.
