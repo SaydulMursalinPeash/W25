@@ -1,4 +1,5 @@
-import customtkinter as ctk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 from tkinter import Canvas, messagebox
 from PIL import Image, ImageTk
 import threading
@@ -13,15 +14,16 @@ import cv2
 import sys
 from rclpy.executors import MultiThreadedExecutor
 
-class IMUVisualizer(ctk.CTk):
+class IMUVisualizer(ttk.Window):
     def __init__(self):
-        super().__init__()
+        # Use a dark theme for a modern look
+        super().__init__(themename="darkly")
 
         # Flag for controlling ROS spin thread
         self.running = True
 
-        self.title("IMU, Camera, and Teleop Visualizer")
-        self.geometry("1200x800")  # Increased width to accommodate the new column
+        self.title("ROS Sensor & Control Visualizer")
+        self.geometry("1400x800")
 
         # Initialize ROS 2
         rclpy.init(args=None)
@@ -46,11 +48,17 @@ class IMUVisualizer(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def setup_gui(self):
-        # Main frame
-        self.main_frame = ctk.CTkFrame(self)
-        self.main_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)  # Use grid layout for the main frame
+        # Create a main container with padding
+        self.main_container = ttk.Frame(self, padding=20)
+        self.main_container.pack(fill=BOTH, expand=YES)
 
-        # Left side - IMU controls
+        # Configure grid layout
+        self.main_container.columnconfigure(0, weight=1)
+        self.main_container.columnconfigure(1, weight=2)
+        self.main_container.columnconfigure(2, weight=1)
+        self.main_container.rowconfigure(0, weight=1)
+
+        # Left column - IMU controls
         self.setup_imu_controls()
 
         # Middle column - Camera feed
@@ -58,12 +66,6 @@ class IMUVisualizer(ctk.CTk):
 
         # Right column - Teleop controls
         self.setup_teleop_controls()
-
-        # Ensure the window expands as needed
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)  # IMU controls column
-        self.grid_columnconfigure(1, weight=2)  # Camera feed column
-        self.grid_columnconfigure(2, weight=1)  # Teleop controls column
 
         # Populate initial topics
         self.refresh_topics()
@@ -74,122 +76,136 @@ class IMUVisualizer(ctk.CTk):
         self.update_gui_data()
 
     def setup_imu_controls(self):
-        self.control_frame = ctk.CTkFrame(self.main_frame)
-        self.control_frame.grid(row=0, column=0, padx=20, sticky="nsew")
+        # IMU Frame with a card-like appearance
+        imu_frame = ttk.Frame(self.main_container, bootstyle="secondary")
+        imu_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        self.topic_label = ctk.CTkLabel(self.control_frame, text="Select IMU Topic:")
-        self.topic_label.pack(pady=10)
+        # Topic Selection
+        topic_label = ttk.Label(imu_frame, text="Select IMU Topic:", bootstyle="inverse-secondary")
+        topic_label.pack(pady=(10, 5))
 
-        self.topic_var = ctk.StringVar(value="")
-        self.topic_dropdown = ctk.CTkOptionMenu(self.control_frame, variable=self.topic_var, 
-                                              command=self.update_topic)
-        self.topic_dropdown.pack(pady=10)
+        self.topic_var = ttk.StringVar(value="")
+        self.topic_dropdown = ttk.Combobox(imu_frame, textvariable=self.topic_var, 
+                                           bootstyle="secondary")
+        self.topic_dropdown.pack(pady=5, padx=10, fill=X)
+        self.topic_dropdown.bind('<<ComboboxSelected>>', 
+                                 lambda event: self.update_topic(self.topic_var.get()))
 
-        self.refresh_topics_button = ctk.CTkButton(self.control_frame, 
-                                                 text="Refresh IMU Topics", 
-                                                 command=self.refresh_topics)
-        self.refresh_topics_button.pack(pady=10)
+        refresh_button = ttk.Button(imu_frame, text="Refresh Topics", 
+                                    command=self.refresh_topics, 
+                                    bootstyle="secondary-outline")
+        refresh_button.pack(pady=10)
 
         # IMU Data display
-        self.data_frame = ctk.CTkFrame(self.control_frame)
-        self.data_frame.pack(pady=20, fill="both", expand=True)
+        data_frame = ttk.LabelFrame(imu_frame, text="IMU Data", bootstyle="secondary")
+        data_frame.pack(pady=10, padx=10, fill=X)
 
-        self.accel_label = ctk.CTkLabel(self.data_frame, 
-                                      text="Linear Acceleration: x=0.0, y=0.0, z=0.0")
+        self.accel_label = ttk.Label(data_frame, text="Linear Acceleration: x=0.0, y=0.0, z=0.0", 
+                                     bootstyle="inverse-secondary")
         self.accel_label.pack(pady=5)
         
-        self.angular_label = ctk.CTkLabel(self.data_frame, 
-                                        text="Angular Velocity: x=0.0, y=0.0, z=0.0")
+        self.angular_label = ttk.Label(data_frame, text="Angular Velocity: x=0.0, y=0.0, z=0.0", 
+                                       bootstyle="inverse-secondary")
         self.angular_label.pack(pady=5)
 
-        self.orientation_label = ctk.CTkLabel(self.data_frame, 
-                                           text="Orientation: x=0.0, y=0.0, z=0.0, w=0.0")
+        self.orientation_label = ttk.Label(data_frame, 
+                                           text="Orientation: x=0.0, y=0.0, z=0.0, w=0.0", 
+                                           bootstyle="inverse-secondary")
         self.orientation_label.pack(pady=5)
 
         # IMU Direction Indicator
-        self.canvas = Canvas(self.control_frame, width=300, height=300, bg="white")
+        self.canvas = Canvas(imu_frame, width=300, height=300, bg="white")
         self.canvas.pack(pady=10)
         self.arrow = self.canvas.create_line(150, 150, 150, 50, width=5, arrow="last")
 
     def setup_camera_controls(self):
-        self.visual_frame = ctk.CTkFrame(self.main_frame)
-        self.visual_frame.grid(row=0, column=1, padx=20, sticky="nsew")
+        # Camera Frame with a card-like appearance
+        camera_frame = ttk.Frame(self.main_container, bootstyle="secondary")
+        camera_frame.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-        self.camera_topic_label = ctk.CTkLabel(self.visual_frame, text="Select Camera Topic:")
-        self.camera_topic_label.pack(pady=10)
+        # Topic Selection
+        topic_label = ttk.Label(camera_frame, text="Select Camera Topic:", 
+                                bootstyle="inverse-secondary")
+        topic_label.pack(pady=(10, 5))
 
-        self.camera_topic_var = ctk.StringVar(value="")
-        self.camera_topic_dropdown = ctk.CTkOptionMenu(self.visual_frame, 
-                                                     variable=self.camera_topic_var, 
-                                                     command=self.update_camera_topic)
-        self.camera_topic_dropdown.pack(pady=10)
+        self.camera_topic_var = ttk.StringVar(value="")
+        self.camera_topic_dropdown = ttk.Combobox(camera_frame, 
+                                                  textvariable=self.camera_topic_var, 
+                                                  bootstyle="secondary")
+        self.camera_topic_dropdown.pack(pady=5, padx=10, fill=X)
+        self.camera_topic_dropdown.bind('<<ComboboxSelected>>', 
+                                        lambda event: self.update_camera_topic(self.camera_topic_var.get()))
 
-        self.refresh_camera_topics_button = ctk.CTkButton(self.visual_frame, 
-                                                        text="Refresh Camera Topics", 
-                                                        command=self.refresh_camera_topics)
-        self.refresh_camera_topics_button.pack(pady=10)
+        refresh_button = ttk.Button(camera_frame, text="Refresh Camera Topics", 
+                                    command=self.refresh_camera_topics, 
+                                    bootstyle="secondary-outline")
+        refresh_button.pack(pady=10)
 
         # Debug information display
-        self.debug_label = ctk.CTkLabel(self.visual_frame, text="Camera Debug Info: No data")
+        self.debug_label = ttk.Label(camera_frame, text="Camera Debug Info: No data", 
+                                     bootstyle="inverse-secondary")
         self.debug_label.pack(pady=5)
 
-        # Camera Feed Canvas - making it more compact
-        self.camera_feed_canvas = Canvas(self.visual_frame, width=640, height=360, bg="black")
-        self.camera_feed_canvas.pack(pady=20)
+        # Camera Feed Canvas
+        self.camera_canvas = Canvas(camera_frame, width=640, height=360, bg="black")
+        self.camera_canvas.pack(pady=20)
 
         # Store the current PhotoImage
         self.current_image = None
 
     def setup_teleop_controls(self):
-        # Teleop controls moved to the right column
-        self.teleop_frame = ctk.CTkFrame(self.main_frame)
-        self.teleop_frame.grid(row=0, column=2, padx=20, sticky="nsew")
+        # Teleop Frame with a card-like appearance
+        teleop_frame = ttk.Frame(self.main_container, bootstyle="secondary")
+        teleop_frame.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
 
-        self.teleop_topic_label = ctk.CTkLabel(self.teleop_frame, text="Select Teleop Topic:")
-        self.teleop_topic_label.pack(pady=10)
+        # Topic Selection
+        topic_label = ttk.Label(teleop_frame, text="Select Teleop Topic:", 
+                                bootstyle="inverse-secondary")
+        topic_label.pack(pady=(10, 5))
 
-        self.teleop_topic_var = ctk.StringVar(value="")
-        self.teleop_topic_dropdown = ctk.CTkOptionMenu(self.teleop_frame, 
-                                                    variable=self.teleop_topic_var, 
-                                                    command=self.update_teleop_topic)
-        self.teleop_topic_dropdown.pack(pady=10)
+        self.teleop_topic_var = ttk.StringVar(value="")
+        self.teleop_topic_dropdown = ttk.Combobox(teleop_frame, 
+                                                  textvariable=self.teleop_topic_var, 
+                                                  bootstyle="secondary")
+        self.teleop_topic_dropdown.pack(pady=5, padx=10, fill=X)
+        self.teleop_topic_dropdown.bind('<<ComboboxSelected>>', 
+                                        lambda event: self.update_teleop_topic(self.teleop_topic_var.get()))
 
-        self.refresh_teleop_topics_button = ctk.CTkButton(self.teleop_frame, 
-                                                        text="Refresh Teleop Topics", 
-                                                        command=self.refresh_teleop_topics)
-        self.refresh_teleop_topics_button.pack(pady=10)
+        refresh_button = ttk.Button(teleop_frame, text="Refresh Teleop Topics", 
+                                    command=self.refresh_teleop_topics, 
+                                    bootstyle="secondary-outline")
+        refresh_button.pack(pady=10)
 
-        # Teleop control buttons in a vertical arrangement
-        self.button_frame = ctk.CTkFrame(self.teleop_frame)
-        self.button_frame.pack(pady=10)
+        # Teleop control buttons
+        button_frame = ttk.Frame(teleop_frame)
+        button_frame.pack(pady=10)
 
-        # Create a vertical layout for buttons
-        button_size = 60  # Define button size to make them round
-
-        # Up-Down-Left-Right with Stop button at the center
-        self.up_button = ctk.CTkButton(self.button_frame, text="▲", 
-                                       command=lambda: self.teleop_node.publish_velocity(0.5, 0.0),
-                                       width=button_size, height=button_size)
+        # Create a grid for navigation buttons
+        button_style = {"bootstyle": "secondary", "width": 8}
+        
+        self.up_button = ttk.Button(button_frame, text="▲", 
+                                    command=lambda: self.teleop_node.publish_velocity(0.5, 0.0),
+                                    **button_style)
         self.up_button.grid(row=0, column=1, pady=5)
 
-        self.left_button = ctk.CTkButton(self.button_frame, text="◀", 
-                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.5),
-                                         width=button_size, height=button_size)
+        self.left_button = ttk.Button(button_frame, text="◀", 
+                                      command=lambda: self.teleop_node.publish_velocity(0.0, 0.5),
+                                      **button_style)
         self.left_button.grid(row=1, column=0, padx=5, pady=5)
 
-        self.stop_button = ctk.CTkButton(self.button_frame, text="Stop", 
-                                         command=lambda: self.teleop_node.publish_velocity(0.0, 0.0),
-                                         width=button_size, height=button_size)
+        self.stop_button = ttk.Button(button_frame, text="Stop", 
+                                      command=lambda: self.teleop_node.publish_velocity(0.0, 0.0),
+                                      **button_style)
         self.stop_button.grid(row=1, column=1, pady=5)
 
-        self.right_button = ctk.CTkButton(self.button_frame, text="▶", 
-                                          command=lambda: self.teleop_node.publish_velocity(0.0, -0.5),
-                                          width=button_size, height=button_size)
+        self.right_button = ttk.Button(button_frame, text="▶", 
+                                       command=lambda: self.teleop_node.publish_velocity(0.0, -0.5),
+                                       **button_style)
         self.right_button.grid(row=1, column=2, padx=5, pady=5)
 
-        self.down_button = ctk.CTkButton(self.button_frame, text="▼", 
-                                        command=lambda: self.teleop_node.publish_velocity(-0.5, 0.0),
-                                        width=button_size, height=button_size)
+        self.down_button = ttk.Button(button_frame, text="▼", 
+                                      command=lambda: self.teleop_node.publish_velocity(-0.5, 0.0),
+                                      **button_style)
         self.down_button.grid(row=2, column=1, pady=5)
 
     def update_topic(self, topic_name):
@@ -260,52 +276,72 @@ class IMUVisualizer(ctk.CTk):
 
     def update_camera_feed(self, img_msg):
         try:
-            # Update debug information
+            # Debug information
             debug_info = (f"Image info - Width: {img_msg.width}, Height: {img_msg.height}, "
-                         f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
+                        f"Encoding: {img_msg.encoding}, Step: {img_msg.step}")
             self.debug_label.configure(text=debug_info)
 
-            # Handle different encodings
-            if img_msg.encoding == 'bgr8':
+            # Determine image shape based on encoding
+            if img_msg.encoding == 'mono8':
                 img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
-                    img_msg.height, img_msg.width, -1
+                    (img_msg.height, img_msg.width)
+                )
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
+            elif img_msg.encoding == 'bgr8':
+                img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
+                    (img_msg.height, img_msg.width, 3)
                 )
                 img_array = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
             elif img_msg.encoding == 'rgb8':
                 img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
-                    img_msg.height, img_msg.width, -1
+                    (img_msg.height, img_msg.width, 3)
                 )
-            elif img_msg.encoding == 'mono8':
-                img_array = np.frombuffer(img_msg.data, dtype=np.uint8).reshape(
-                    img_msg.height, img_msg.width, -1
+            elif img_msg.encoding in ['16UC1', '32FC1']:
+                # Convert depth image to 8-bit grayscale
+                if img_msg.encoding == '16UC1':
+                    depth_array = np.frombuffer(img_msg.data, dtype=np.uint16).reshape(
+                        (img_msg.height, img_msg.width)
+                    )
+                else:  # 32FC1
+                    depth_array = np.frombuffer(img_msg.data, dtype=np.float32).reshape(
+                        (img_msg.height, img_msg.width)
+                    )
+                
+                # Normalize depth image
+                depth_normalized = cv2.normalize(
+                    depth_array, 
+                    None, 
+                    0, 
+                    255, 
+                    cv2.NORM_MINMAX, 
+                    dtype=cv2.CV_8U
                 )
-                img_array = cv2.cvtColor(img_array, cv2.COLOR_GRAY2RGB)
-            elif img_msg.encoding == '32FC1':
-                img_array = np.frombuffer(img_msg.data, dtype=np.float32).reshape(
-                    img_msg.height, img_msg.width
-                )
-                # Normalize the depth image for visualization
-                img_array = cv2.normalize(img_array, None, 0, 255, cv2.NORM_MINMAX)
-                img_array = np.nan_to_num(img_array, nan=0.0)  # Handle NaN values
-                img_array = np.uint8(img_array)
-                img_array = cv2.applyColorMap(img_array, cv2.COLORMAP_JET)
+                
+                # Apply color map
+                img_array = cv2.applyColorMap(depth_normalized, cv2.COLORMAP_JET)
             else:
                 print(f"Unsupported encoding: {img_msg.encoding}")
                 return
 
-            # Convert numpy array to PIL Image
-            image = Image.fromarray(img_array)
-            
             # Resize image to fit canvas
-            image = image.resize((640, 360))  # Reduced height to make it more compact
-
-            # Update the canvas with the new image
-            self.camera_feed_image = ImageTk.PhotoImage(image)
-            self.camera_feed_canvas.create_image(0, 0, anchor='nw', image=self.camera_feed_image)
-
+            image = Image.fromarray(img_array)
+            image = image.resize((640, 360))
+            
+            # Convert to PhotoImage
+            self.current_image = ImageTk.PhotoImage(image)
+            
+            # Update canvas
+            self.camera_canvas.delete("all")
+            self.camera_canvas.create_image(
+                320, 180,  # Center of canvas
+                anchor="center",
+                image=self.current_image
+            )
+            
         except Exception as e:
             print(f"Error updating camera feed: {e}")
-
+            import traceback
+            traceback.print_exc()
     def ros_spin_thread(self):
         try:
             while rclpy.ok() and self.running:
@@ -424,4 +460,3 @@ class TeleopNode(Node):
 if __name__ == "__main__":
     app = IMUVisualizer()
     app.mainloop()
-
