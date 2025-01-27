@@ -1,0 +1,152 @@
+# # Laser scan topics
+# - ros_topic_name: "/w25/lidar_back/scan"
+#   gz_topic_name: "/world/world_demo/model/tugbot/link/scan_back/sensor/scan_back/scan"
+#   ros_type_name: "sensor_msgs/msg/LaserScan"
+#   gz_type_name: "gz.msgs.LaserScan"
+#   direction: BIDIRECTIONAL
+#   qos:
+#     durability: volatile
+#     reliability: reliable
+#     history: keep_last
+#     depth: 10
+
+- ros_topic_name: "/w25/lidar_front/scan"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/scan_front/sensor/scan_front/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: BIDIRECTIONAL
+  qos:
+    durability: volatile
+    reliability: reliable
+    history: keep_last
+    depth: 100
+- ros_topic_name: "/scan"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/scan_omni/sensor/scan_omni/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: BIDIRECTIONAL
+  qos:
+    durability: volatile
+    reliability: reliable
+    history: keep_last
+    depth: 100
+# Odometry
+- ros_topic_name: "/w25/odom"
+  gz_topic_name: "/model/tugbot/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+  qos:
+    reliability: RELIABLE
+    history: KEEP_LAST
+    depth: 100 # Increase depth to allow for more messages in the queue
+
+
+# Velocity command
+- ros_topic_name: "/w25/cmd_vel"
+  gz_topic_name: "/model/tugbot/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+  direction: BIDIRECTIONAL
+
+# Cameras
+# - ros_topic_name: "/w25/back_camera/image"
+#   gz_topic_name: "/world/world_demo/model/tugbot/link/camera_back/sensor/color/image"
+#   ros_type_name: "sensor_msgs/msg/Image"
+#   gz_type_name: "gz.msgs.Image"
+#   direction: GZ_TO_ROS
+
+- ros_topic_name: "/w25/front_camera/image"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/camera_front/sensor/color/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# - ros_topic_name: "/w25/back_camera/camera_info"
+#   gz_topic_name: "/world/world_demo/model/tugbot/link/camera_back/sensor/color/camera_info"
+#   ros_type_name: "sensor_msgs/msg/CameraInfo"
+#   gz_type_name: "gz.msgs.CameraInfo"
+#   direction: GZ_TO_ROS
+#   qos:
+#     durability: volatile
+#     reliability: best_effort
+#     history: keep_last
+#     depth: 1
+
+- ros_topic_name: "/w25/front_camera/camera_info"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/camera_front/sensor/color/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+  qos:
+    durability: volatile
+    reliability: best_effort
+    history: keep_last
+    depth: 1
+
+# # Depth cameras
+# - ros_topic_name: "/w25/back_camera/depth/image"
+#   gz_topic_name: "/world/world_demo/model/tugbot/link/camera_back/sensor/depth/depth_image"
+#   ros_type_name: "sensor_msgs/msg/Image"
+#   gz_type_name: "gz.msgs.Image"
+#   direction: GZ_TO_ROS
+
+- ros_topic_name: "/w25/front_camera/depth/image"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/camera_front/sensor/depth/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# Point clouds
+# - ros_topic_name: "/w25/back_camera/points"
+#   gz_topic_name: "/world/world_demo/model/tugbot/link/camera_back/sensor/depth/depth_image/points"
+#   ros_type_name: "sensor_msgs/msg/PointCloud2"
+#   gz_type_name: "gz.msgs.PointCloudPacked"
+#   direction: GZ_TO_ROS
+
+- ros_topic_name: "/w25/front_camera/points"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/camera_front/sensor/depth/depth_image/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# Joint states
+- ros_topic_name: "/w25/joint_states"
+  gz_topic_name: "/world/world_demo/model/tugbot/joint_state"
+  ros_type_name: "sensor_msgs/msg/JointState"
+  gz_type_name: "gz.msgs.Model"
+  direction: GZ_TO_ROS
+
+# Battery state
+# - ros_topic_name: "/w25/battery_state"
+#   gz_topic_name: "/model/tugbot/battery/linear_battery/state"
+#   ros_type_name: "sensor_msgs/msg/BatteryState"
+#   gz_type_name: "gz.msgs.BatteryState"
+#   direction: GZ_TO_ROS
+
+# Robot pose
+- ros_topic_name: "/w25/robot_pose"
+  gz_topic_name: "/model/tugbot/pose"
+  ros_type_name: "geometry_msgs/msg/PoseStamped"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+# Clock
+- ros_topic_name: "/clock"
+  gz_topic_name: "/world/world_demo/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# Transforms (static and dynamic)
+- ros_topic_name: "/tf"
+  gz_topic_name: "/model/tugbot/tf"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "/w25/imu"
+  gz_topic_name: "/world/world_demo/model/tugbot/link/imu_link/sensor/imu/imu"
+  ros_type_name: "sensor_msgs/msg/Imu"
+  gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS

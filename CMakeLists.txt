@@ -13,12 +13,14 @@ find_package(nav_msgs REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
-  ${PROJECT_NAME}/kmf.py
+  ${PROJECT_NAME}/ekf.py
   ${PROJECT_NAME}/odom_noisy_node.py
+  ${PROJECT_NAME}/imu_odom.py
+  ${PROJECT_NAME}/sync.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch urdf W25
+install(DIRECTORY launch urdf W25 config
 DESTINATION share/${PROJECT_NAME}/)
 # uncomment the following section in order to fill in
 # further dependencies manually.

@@ -1,0 +1,36 @@
+slam_toolbox:
+  ros__parameters:
+    # Existing parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    scan_topic: /scan
+    odom_topic: /w25/odom
+    
+    # New parameters to stabilize odom frame
+    resolution: 0.05
+    maximum_laser_range: 5.0
+    minimum_laser_range: 0.1
+    
+    # Key parameters for frame stability
+    do_during_scan_matching: true
+    do_scan_matching: true
+    constrain_odom: true  # Force odometry constraints
+    
+    # Prevent significant frame transformations
+    transform_publish_period: 0.1
+    map_update_interval: 1.0
+    scan_matcher_transform_publish_period: 0.1
+    
+    # Optional: Increase matching thresholds
+    correlation_search_space_dimx: 0.5
+    correlation_search_space_dimy: 0.5
+    correlation_search_space_dimz: 0.5
+    
+    # Limit pose corrections
+    solver:
+      max_pose_correction_distance: 0.1
+      max_pose_correction_angle: 0.05
+    
+    # Disable transform publishing
+    publish_tf: false

@@ -5,8 +5,9 @@ import os
 
 def generate_launch_description():
     config_file_path = os.path.join(
-        get_package_share_directory('W25'), 'launch', 'bridge_config.yaml'
+        get_package_share_directory('W25'), 'config', 'bridge_config.yaml'
     )
+    ekf_config = '/home/peash/mobile_ws/src/W25/config/ekf.yaml'#os.path.join(get_package_share_directory('W25'), 'config', 'ekf.yaml')
 
     return LaunchDescription([
         Node(
@@ -45,4 +46,24 @@ def generate_launch_description():
             name='back_camera_tf',
             arguments=['-0.241', '0.0', '0.2303', '0.0', '0.0', '3.141592654', 'base_link', 'tugbot/camera_back/camera_back']
         ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='lidar_omni_tf',
+            arguments=['0.221', '0.0', '0.1404', '0.0', '0.0', '0.0', 'base_link', 'tugbot/scan_omni/scan_omni']
+        ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='map_to_odom_tf',
+            arguments=['0.0','0.0','0.0', '0.0', '0.0', '0.0', 'map', 'odom']
+        )
+        # Node(
+        #     package='robot_localization',
+        #     executable='ekf_node',
+        #     name='ekf_filter_node',
+        #     output='screen',
+        #     parameters=[ekf_config],
+        # ),
     ])
+#-0.035 0.035 -0.08
