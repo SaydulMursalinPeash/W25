@@ -20,7 +20,7 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch urdf W25 config
+install(DIRECTORY launch urdf W25 config map
 DESTINATION share/${PROJECT_NAME}/)
 # uncomment the following section in order to fill in
 # further dependencies manually.
