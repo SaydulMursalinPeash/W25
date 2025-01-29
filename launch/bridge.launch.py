@@ -52,12 +52,12 @@ def generate_launch_description():
             name='lidar_omni_tf',
             arguments=['0.221', '0.0', '0.1404', '0.0', '0.0', '0.0', 'base_link', 'tugbot/scan_omni/scan_omni']
         ),
-        Node(
-            package='tf2_ros',
-            executable='static_transform_publisher',
-            name='map_to_odom_tf',
-            arguments=['0.0','0.0','0.0', '0.0', '0.0', '0.0', 'map', 'odom']
-        )
+        # Node(
+        #     package='tf2_ros',
+        #     executable='static_transform_publisher',
+        #     name='map_to_odom_tf',
+        #     arguments=['0.0','0.0','0.0', '0.0', '0.0', '0.0', 'map', 'odom']
+        # )
         # Node(
         #     package='robot_localization',
         #     executable='ekf_node',
