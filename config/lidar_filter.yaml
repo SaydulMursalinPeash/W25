@@ -1,0 +1,7 @@
+filter_chain:
+  ros__parameters:
+    filter1:
+      type: "laser_filters/RangeFilter"
+      params:
+        lower_threshold: 0.2  # Ignore points closer than 20 cm
+        upper_threshold: 10.0 # Max range for valid points

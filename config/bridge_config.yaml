@@ -10,26 +10,26 @@
 #     history: keep_last
 #     depth: 10
 
-- ros_topic_name: "/w25/lidar_front/scan"
-  gz_topic_name: "/world/world_demo/model/tugbot/link/scan_front/sensor/scan_front/scan"
-  ros_type_name: "sensor_msgs/msg/LaserScan"
-  gz_type_name: "gz.msgs.LaserScan"
-  direction: BIDIRECTIONAL
-  qos:
-    durability: volatile
-    reliability: reliable
-    history: keep_last
-    depth: 100
+# - ros_topic_name: "/w25/lidar_front/scan"
+#   gz_topic_name: "/world/world_demo/model/tugbot/link/scan_front/sensor/scan_front/scan"
+#   ros_type_name: "sensor_msgs/msg/LaserScan"
+#   gz_type_name: "gz.msgs.LaserScan"
+#   direction: BIDIRECTIONAL
+#   qos:
+#     durability: volatile
+#     reliability: reliable
+#     history: keep_last
+#     depth: 100
 - ros_topic_name: "/scan"
   gz_topic_name: "/world/world_demo/model/tugbot/link/scan_omni/sensor/scan_omni/scan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
   direction: BIDIRECTIONAL
-  qos:
-    durability: volatile
-    reliability: reliable
-    history: keep_last
-    depth: 100
+  # qos:
+  #   durability: volatile
+  #   reliability: reliable
+  #   history: keep_last
+  #   depth: 100
 # Odometry
 - ros_topic_name: "/w25/odom"
   gz_topic_name: "/model/tugbot/odometry"
@@ -43,7 +43,7 @@
 
 
 # Velocity command
-- ros_topic_name: "/w25/cmd_vel"
+- ros_topic_name: "/cmd_vel"
   gz_topic_name: "/model/tugbot/cmd_vel"
   ros_type_name: "geometry_msgs/msg/Twist"
   gz_type_name: "gz.msgs.Twist"
