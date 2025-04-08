@@ -40,8 +40,7 @@ def generate_launch_description():
             arguments=['0.0553', '0.0', '0.4323', '0.0', '0.0', '0.0', 'base_link', 'tugbot/camera_front/camera_front']
         ),
         # Static transform for back camera
-        # Node(ros2 launch slam_toolbox online_async_launch.py  
-
+        # Node(
         #     package='tf2_ros',
         #     executable='static_transform_publisher',
         #     name='back_camera_tf',

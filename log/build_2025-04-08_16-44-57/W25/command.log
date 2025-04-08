@@ -1,0 +1,6 @@
+Invoking command in '/home/peash/sim_ws/src/W25/build/W25': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/peash/sim_ws/src/W25 -DCMAKE_INSTALL_PREFIX=/home/peash/sim_ws/src/W25/install/W25
+Invoked command in '/home/peash/sim_ws/src/W25/build/W25' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/peash/sim_ws/src/W25 -DCMAKE_INSTALL_PREFIX=/home/peash/sim_ws/src/W25/install/W25
+Invoking command in '/home/peash/sim_ws/src/W25/build/W25': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/peash/sim_ws/src/W25/build/W25 -- -j16 -l16
+Invoked command in '/home/peash/sim_ws/src/W25/build/W25' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/peash/sim_ws/src/W25/build/W25 -- -j16 -l16
+Invoking command in '/home/peash/sim_ws/src/W25/build/W25': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/peash/sim_ws/src/W25/build/W25
+Invoked command in '/home/peash/sim_ws/src/W25/build/W25' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/peash/sim_ws/src/W25/build/W25

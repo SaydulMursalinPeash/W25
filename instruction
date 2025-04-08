@@ -1,0 +1,11 @@
+cd sim_ws
+colcon build
+source ~/.bashrc
+ros2 launch W25 bridge.launch.py
+ros2 launch W25 amcl.launch.py
+ros2 lifecycle set /map_server configure
+ros2 lifecycle set /map_server activate
+ros2 lifecycle set /amcl configure
+ros2 lifecycle set /amcl activate
+ros2 launch nav2_bringup bringup_launch.py map:=~/sim_ws/src/W25/map/wirehouse_map.yaml
+rviz2     with config file ~/sim_ws/src/W25/config/rviz_config.rviz

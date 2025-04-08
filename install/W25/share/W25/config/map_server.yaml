@@ -1,0 +1,6 @@
+map_server:
+  ros__parameters:
+    yaml_filename: "/home/peash/sim_ws/src/W25/map/wirehouse_map.yaml"
+    frame_id: "map"
+    map_publish_frequency: 1.0
+    

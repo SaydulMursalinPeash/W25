@@ -1,0 +1,24 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/peash/ur5e_sim/install/ur5e_control/lib/python3.10/site-packages",
+        "/home/peash/ur5e_sim/install/ros_tcp_endpoint/lib/python3.10/site-packages",
+        "/home/peash/ros_ur_driver/install/ur_robot_driver/local/lib/python3.10/dist-packages",
+        "/home/peash/ros_ur_driver/install/ur_moveit_config/local/lib/python3.10/dist-packages",
+        "/home/peash/ros_ur_driver/install/ur_dashboard_msgs/local/lib/python3.10/dist-packages",
+        "/home/peash/ros_ur_driver/install/ur5e_control/lib/python3.10/site-packages",
+        "/home/peash/ros_ur_driver/install/ros_tcp_endpoint/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/peash/ur5e_sim/install/ur5e_control/lib/python3.10/site-packages",
+        "/home/peash/ur5e_sim/install/ros_tcp_endpoint/lib/python3.10/site-packages",
+        "/home/peash/ros_ur_driver/install/ur_robot_driver/local/lib/python3.10/dist-packages",
+        "/home/peash/ros_ur_driver/install/ur_moveit_config/local/lib/python3.10/dist-packages",
+        "/home/peash/ros_ur_driver/install/ur_dashboard_msgs/local/lib/python3.10/dist-packages",
+        "/home/peash/ros_ur_driver/install/ur5e_control/lib/python3.10/site-packages",
+        "/home/peash/ros_ur_driver/install/ros_tcp_endpoint/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

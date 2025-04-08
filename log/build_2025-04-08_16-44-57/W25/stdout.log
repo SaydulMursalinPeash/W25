@@ -1,0 +1,130 @@
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Found rclpy: 3.3.16 (/opt/ros/humble/share/rclpy/cmake)
+-- Found nav_msgs: 4.8.0 (/opt/ros/humble/share/nav_msgs/cmake)
+-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found ament_lint_auto: 0.12.12 (/opt/ros/humble/share/ament_lint_auto/cmake)
+-- Added test 'cppcheck' to perform static code analysis on C / C++ code
+-- Configured cppcheck include dirs: 
+-- Configured cppcheck exclude dirs and/or files: 
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'uncrustify' to check C / C++ code style
+-- Configured uncrustify additional arguments: 
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/peash/sim_ws/src/W25/build/W25
+Built target ament_cmake_python_copy_W25
+running egg_info
+creating W25.egg-info
+writing W25.egg-info/PKG-INFO
+writing dependency_links to W25.egg-info/dependency_links.txt
+writing top-level names to W25.egg-info/top_level.txt
+writing manifest file 'W25.egg-info/SOURCES.txt'
+reading manifest file 'W25.egg-info/SOURCES.txt'
+writing manifest file 'W25.egg-info/SOURCES.txt'
+Built target ament_cmake_python_build_W25_egg
+-- Install configuration: ""
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/pythonpath.sh
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/pythonpath.dsv
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/dependency_links.txt
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/top_level.txt
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/PKG-INFO
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/SOURCES.txt
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/imu_odom.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/kmf.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/__init__.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/ekf.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/odom_noisy_node.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/odom.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/sync.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode/c_cpp_properties.json
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode/settings.json
+Listing '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25'...
+Listing '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/__init__.py'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/ekf.py'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/imu_odom.py'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/kmf.py'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/odom.py'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/odom_noisy_node.py'...
+Compiling '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/sync.py'...
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/lib/W25/ekf.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/lib/W25/odom_noisy_node.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/lib/W25/imu_odom.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/lib/W25/sync.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/static_tf.launch.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/bridge.launch.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/bridge_config.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/rviz.rviz
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/nav.launch.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/slam_toolbox_launch.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/amcl.launch.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//urdf
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//urdf/w25_urdf.urdf
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//urdf/world.sdf
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/imu_odom.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/kmf.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/__init__.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/ekf.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/odom_noisy_node.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/odom.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/sync.py
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/.vscode
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/.vscode/c_cpp_properties.json
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/.vscode/settings.json
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/rviz_config.rviz
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/map_server.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/lidar_filter.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/bridge_config.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/nav2_params.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/rviz.rviz
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/ekf.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/slam_config.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/amcl.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/tugbot_map.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/tugbot_map.pgm
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/my_map.pgm
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/wirehouse_map.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/wirehouse_map.pgm
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/my_map.yaml
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/ament_index/resource_index/package_run_dependencies/W25
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/ament_index/resource_index/parent_prefix_path/W25
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/ament_prefix_path.sh
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/ament_prefix_path.dsv
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/path.sh
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/path.dsv
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.bash
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.sh
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.zsh
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.dsv
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/package.dsv
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/ament_index/resource_index/packages/W25
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/cmake/W25Config.cmake
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/cmake/W25Config-version.cmake
+-- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/package.xml

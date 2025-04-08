@@ -1,0 +1,4 @@
+source;share/W25/local_setup.bash
+source;share/W25/local_setup.dsv
+source;share/W25/local_setup.sh
+source;share/W25/local_setup.zsh

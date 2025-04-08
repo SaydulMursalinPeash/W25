@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from tkinter import Canvas, messagebox
+from tkinter.scrolledtext import ScrolledText
 from PIL import Image, ImageTk
 import threading
+import subprocess
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Imu, Image as SensorImage
@@ -110,6 +112,61 @@ class IMUVisualizer(ctk.CTk):
         self.canvas = Canvas(self.control_frame, width=300, height=300, bg="white")
         self.canvas.pack(pady=10)
         self.arrow = self.canvas.create_line(150, 150, 150, 50, width=5, arrow="last")
+
+        # Add Bridge and AutoNav buttons
+        self.bridge_button = ctk.CTkButton(self.control_frame, text="Bridge", command=self.run_bridge)
+        self.bridge_button.pack(pady=10)
+
+        self.auto_nav_button = ctk.CTkButton(self.control_frame, text="AutoNav", command=self.run_auto_nav)
+        self.auto_nav_button.pack(pady=10)
+
+        # Add a console output window
+        self.console_output = ScrolledText(self.control_frame, height=10, wrap="word", state="disabled")
+        self.console_output.pack(pady=10, fill="both", expand=True)
+
+    def run_bridge(self):
+        """Run the Bridge commands."""
+        commands = [
+            "cd ~/sim_ws",
+            "source ~/.bashrc",
+            "colcon build",
+            "ros2 launch W25 bridge.launch.py"
+        ]
+        self.execute_commands(commands)
+
+    def run_auto_nav(self):
+        """Run the AutoNav commands."""
+        commands = [
+            "ros2 launch W25 amcl.launch.py",
+            "ros2 lifecycle set /map_server configure",
+            "ros2 lifecycle set /map_server activate",
+            "ros2 lifecycle set /amcl configure",
+            "ros2 lifecycle set /amcl activate",
+            "ros2 launch nav2_bringup bringup_launch.py map:=~/sim_ws/src/W25/map/wirehouse_map.yaml",
+            "rviz2"
+        ]
+        self.execute_commands(commands)
+
+    def execute_commands(self, commands):
+        """Execute a list of shell commands in a separate thread and display output in the console."""
+        def run_commands():
+            self.console_output.configure(state="normal")
+            self.console_output.delete(1.0, "end")  # Clear previous output
+
+            for command in commands:
+                self.console_output.insert("end", f"$ {command}\n")
+                self.console_output.see("end")
+                try:
+                    result = subprocess.run(command, shell=True, text=True, capture_output=True, check=True)
+                    self.console_output.insert("end", result.stdout)
+                except subprocess.CalledProcessError as e:
+                    self.console_output.insert("end", e.stderr)
+                self.console_output.see("end")
+
+            self.console_output.configure(state="disabled")
+
+        # Run the commands in a separate thread
+        threading.Thread(target=run_commands, daemon=True).start()
 
     def setup_camera_controls(self):
         self.visual_frame = ctk.CTkFrame(self.main_frame)

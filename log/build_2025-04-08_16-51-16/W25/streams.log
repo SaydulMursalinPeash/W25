@@ -1,0 +1,91 @@
+[0.006s] Invoking command in '/home/peash/sim_ws/src/W25/build/W25': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/peash/sim_ws/src/W25/build/W25 -- -j16 -l16
+[0.041s] Built target ament_cmake_python_copy_W25
+[0.168s] running egg_info
+[0.168s] writing W25.egg-info/PKG-INFO
+[0.168s] writing dependency_links to W25.egg-info/dependency_links.txt
+[0.168s] writing top-level names to W25.egg-info/top_level.txt
+[0.169s] reading manifest file 'W25.egg-info/SOURCES.txt'
+[0.170s] writing manifest file 'W25.egg-info/SOURCES.txt'
+[0.185s] Built target ament_cmake_python_build_W25_egg
+[0.191s] Invoked command in '/home/peash/sim_ws/src/W25/build/W25' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --build /home/peash/sim_ws/src/W25/build/W25 -- -j16 -l16
+[0.197s] Invoking command in '/home/peash/sim_ws/src/W25/build/W25': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/peash/sim_ws/src/W25/build/W25
+[0.201s] -- Install configuration: ""
+[0.201s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/pythonpath.sh
+[0.201s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/pythonpath.dsv
+[0.201s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info
+[0.201s] -- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/dependency_links.txt
+[0.201s] -- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/top_level.txt
+[0.202s] -- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/PKG-INFO
+[0.202s] -- Installing: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25-0.0.0-py3.10.egg-info/SOURCES.txt
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/imu_odom.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/kmf.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/__init__.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/ekf.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/odom_noisy_node.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/odom.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/sync.py
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode/c_cpp_properties.json
+[0.202s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode/settings.json
+[0.220s] Listing '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25'...
+[0.220s] Listing '/home/peash/sim_ws/src/W25/install/W25/local/lib/python3.10/dist-packages/W25/.vscode'...
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/lib/W25/ekf.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/lib/W25/odom_noisy_node.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/lib/W25/imu_odom.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/lib/W25/sync.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/static_tf.launch.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/bridge.launch.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/bridge_config.yaml
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/rviz.rviz
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/nav.launch.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/slam_toolbox_launch.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//launch/amcl.launch.py
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//urdf
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//urdf/w25_urdf.urdf
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//urdf/world.sdf
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25
+[0.222s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/imu_odom.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/kmf.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/__init__.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/ekf.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/odom_noisy_node.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/odom.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/sync.py
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/.vscode
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/.vscode/c_cpp_properties.json
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//W25/.vscode/settings.json
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/rviz_config.rviz
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/map_server.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/lidar_filter.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/bridge_config.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/nav2_params.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/rviz.rviz
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/ekf.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/slam_config.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//config/amcl.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/tugbot_map.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/tugbot_map.pgm
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/my_map.pgm
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/wirehouse_map.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/wirehouse_map.pgm
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25//map/my_map.yaml
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/ament_index/resource_index/package_run_dependencies/W25
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/ament_index/resource_index/parent_prefix_path/W25
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/ament_prefix_path.sh
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/ament_prefix_path.dsv
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/path.sh
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/environment/path.dsv
+[0.223s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.bash
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.sh
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.zsh
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/local_setup.dsv
+[0.224s] -- Installing: /home/peash/sim_ws/src/W25/install/W25/share/W25/package.dsv
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/ament_index/resource_index/packages/W25
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/cmake/W25Config.cmake
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/cmake/W25Config-version.cmake
+[0.224s] -- Up-to-date: /home/peash/sim_ws/src/W25/install/W25/share/W25/package.xml
+[0.225s] Invoked command in '/home/peash/sim_ws/src/W25/build/W25' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake --install /home/peash/sim_ws/src/W25/build/W25
